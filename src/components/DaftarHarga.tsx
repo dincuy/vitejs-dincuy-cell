@@ -1,7 +1,7 @@
-import { Col, Container, Row, Stack, Table, Image } from 'react-bootstrap';
+import { Stack, Table, Image } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { client } from '.././sanity';
-import { PaketData } from '.././utils/types';
+import { PaketData } from '../vite-env';
 import logoImg from '.././assets/images/logo.png';
 
 export default function DaftarHarga({
@@ -31,7 +31,7 @@ export default function DaftarHarga({
         const query = `*[_type == "paket" && kategori == "${kategori.replace(
           '-',
           ' '
-        )}" && provider == "${provider}"]`;
+        )}" && provider == "${provider}" && aktif == true]`;
         const dataFetched = await client.fetch(query);
 
         setData(dataFetched);
@@ -69,13 +69,13 @@ export default function DaftarHarga({
         alt=""
       />
       <Stack className="mt-2">
-        <h1 className="fs-2 my-3 text-center">
-          Daftar Harga Voucher/ Kuota {provider}
+        <h1 className="fs-2 my-3 text-center text-capitalize">
+          Daftar Harga {kategori.split("-").join(" ")} {provider}
         </h1>
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>No.</th>
+              <th>Kode.</th>
               <th>Nama Paket</th>
               <th className="">Masa Aktif</th>
               <th>Harga Modal</th>
@@ -84,10 +84,10 @@ export default function DaftarHarga({
           </thead>
           <tbody>
             {sortedData.map((item, index) => (
-              <tr key={index} style={{ fontSize: '13px' }}>
+              <tr key={index}>
                 <td>{index + 1}</td>
                 <td className="text-start">{item.produk}</td>
-                <td>{getActiveDays(item.produk)} Hari</td>
+                <td className='text-center'>{getActiveDays(item.produk)} Hari</td>
                 <td className="text-nowrap fw-bold">
                   Rp. {item.harga.toLocaleString('id-ID')}
                 </td>
