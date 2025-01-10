@@ -2,7 +2,6 @@ import { Stack, Table, Image } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { client } from '.././sanity';
 import { PaketData } from '../vite-env';
-import logoImg from '.././assets/images/logo.png';
 
 export default function DaftarHarga({
   kategori,
@@ -29,13 +28,13 @@ export default function DaftarHarga({
     // Temukan posisi strip dan spasi setelahnya
     const cariStrip = teks.indexOf("-");
     const start = teks.indexOf(" ", cariStrip);
-  
+
     // Ambil teks setelah strip (jika ada)
     let hasil = start !== -1 ? teks.substring(start + 1) : teks;
-  
+
     // Hapus pola terkait hari, baik "/ X hari" atau ", X Hari"
     hasil = hasil.replace(/( \/ \d+ hari|, \d+ Hari)$/i, "").trim();
-  
+
     return hasil;
   };
 
@@ -76,13 +75,7 @@ export default function DaftarHarga({
 
   return (
     <>
-      <Image
-        className="text-center d-block m-auto"
-        src={logoImg}
-        height="100px"
-        alt=""
-      />
-      <Stack className="mt-2">
+      <Stack className="" style={{ pageBreakAfter: 'always', marginTop: '100px' }}>
         <h1 className="fs-2 my-3 text-center text-capitalize">
           Daftar Harga {kategori.split("-").join(" ")} {provider}
         </h1>
