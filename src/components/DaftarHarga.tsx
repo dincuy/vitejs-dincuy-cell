@@ -25,6 +25,20 @@ export default function DaftarHarga({
     return match ? parseInt(match[1], 10) : null;
   }
 
+  const removeStrBeforeStrip = (teks: string): string => {
+    // Temukan posisi strip dan spasi setelahnya
+    const cariStrip = teks.indexOf("-");
+    const start = teks.indexOf(" ", cariStrip);
+  
+    // Ambil teks setelah strip (jika ada)
+    let hasil = start !== -1 ? teks.substring(start + 1) : teks;
+  
+    // Hapus pola terkait hari, baik "/ X hari" atau ", X Hari"
+    hasil = hasil.replace(/( \/ \d+ hari|, \d+ Hari)$/i, "").trim();
+  
+    return hasil;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -85,8 +99,8 @@ export default function DaftarHarga({
           <tbody>
             {sortedData.map((item, index) => (
               <tr key={index}>
-                <td>{index + 1}</td>
-                <td className="text-start">{item.produk}</td>
+                <td>{index + 1}-{item.kode}</td>
+                <td className="text-start">{removeStrBeforeStrip(item.produk)}</td>
                 <td className='text-center'>{getActiveDays(item.produk)} Hari</td>
                 <td className="text-nowrap fw-bold">
                   Rp. {item.harga.toLocaleString('id-ID')}
