@@ -1,4 +1,4 @@
-import { Stack, Table, Image } from 'react-bootstrap';
+import { Stack, Table } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { client } from '.././sanity';
 import { PaketData } from '../vite-env';
@@ -12,6 +12,7 @@ export default function DaftarHarga({
 }) {
   const [data, setData] = useState<PaketData[]>([]);
   const [sortedData, setSortedData] = useState<PaketData[]>([]);
+  const [kolomKode, setKolomKode] = useState<boolean>(false)
 
   /**
    * Mengambil lamanya masa aktif dari teks paket.
@@ -75,30 +76,34 @@ export default function DaftarHarga({
 
   return (
     <>
-      <Stack className="" style={{ pageBreakAfter: 'always', marginTop: '100px' }}>
+      <Stack className="" style={{ pageBreakAfter: 'always', paddingTop: '110px' }}>
         <h1 className="fs-2 my-3 text-center text-capitalize">
           Daftar Harga {kategori.split("-").join(" ")} {provider}
         </h1>
         <Table striped bordered hover>
           <thead>
-            <tr>
-              <th>Kode.</th>
+            <tr className="text-center">
+              <th onClick={() => setKolomKode(!kolomKode)}>{kolomKode ? 'Kode' : 'No.'}</th>
               <th>Nama Paket</th>
               <th className="">Masa Aktif</th>
-              <th>Harga Modal</th>
+              {kolomKode && (
+                <th>Harga Modal</th>
+              )}
               <th>Harga Jual</th>
             </tr>
           </thead>
           <tbody>
             {sortedData.map((item, index) => (
               <tr key={index}>
-                <td>{index + 1}-{item.kode}</td>
+                <td>{kolomKode ? item.kode : index + 1}</td>
                 <td className="text-start">{removeStrBeforeStrip(item.produk)}</td>
                 <td className='text-center'>{getActiveDays(item.produk)} Hari</td>
-                <td className="text-nowrap fw-bold">
-                  Rp. {item.harga.toLocaleString('id-ID')}
-                </td>
-                <td className="text-nowrap fw-bold">
+                {kolomKode && (
+                  <td className="text-nowrap fw-bold text-end">
+                    Rp. {item.harga.toLocaleString('id-ID')}
+                  </td>
+                )}
+                <td className="text-nowrap fw-bold text-end">
                   Rp. {item.hargaJual.toLocaleString('id-ID')}
                 </td>
               </tr>
