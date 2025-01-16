@@ -13,6 +13,7 @@ export default function DaftarHarga({
   const [data, setData] = useState<PaketData[]>([]);
   const [sortedData, setSortedData] = useState<PaketData[]>([]);
   const [kolomKode, setKolomKode] = useState<boolean>(false)
+  const [showDesc, setShowDesc] = useState<boolean>(false)
 
   /**
    * Mengambil lamanya masa aktif dari teks paket.
@@ -39,6 +40,15 @@ export default function DaftarHarga({
     return hasil;
   };
 
+  function formatTextWithBreaks(input: string): (string)[] {
+    // Membagi teks berdasarkan ". " dan menyisipkan <br /> di antaranya
+    const arrTeks = input.split("\r")
+    // const result = arrTeks.map(sentence => sentence + '.').join('<br />');
+    // console.log(result)
+    // console.log(arrTeks)
+    return arrTeks
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,7 +65,7 @@ export default function DaftarHarga({
     };
 
     fetchData();
-  }, []);
+  }, [provider]);
 
   useEffect(() => {
     if (data) {
@@ -73,7 +83,6 @@ export default function DaftarHarga({
     }
   }, [data]);
   // console.log(data);
-
   return (
     <>
       <Stack className="" style={{ pageBreakAfter: 'always', paddingTop: '110px' }}>
@@ -94,19 +103,28 @@ export default function DaftarHarga({
           </thead>
           <tbody>
             {sortedData.map((item, index) => (
-              <tr key={index}>
-                <td>{kolomKode ? item.kode : index + 1}</td>
-                <td className="text-start">{removeStrBeforeStrip(item.produk)}</td>
-                <td className='text-center'>{getActiveDays(item.produk)} Hari</td>
-                {kolomKode && (
+              <>
+                <tr key={index}>
+                  <td>{kolomKode ? item.kode : index + 1}</td>
+                  <td className="text-start" onClick={() => setShowDesc(!showDesc)}>{removeStrBeforeStrip(item.produk)}</td>
+                  <td className='text-center'>{getActiveDays(item.produk)} Hari</td>
+                  {kolomKode && (
+                    <td className="text-nowrap fw-bold text-end">
+                      Rp. {item.harga.toLocaleString('id-ID')}
+                    </td>
+                  )}
                   <td className="text-nowrap fw-bold text-end">
-                    Rp. {item.harga.toLocaleString('id-ID')}
+                    Rp. {item.hargaJual.toLocaleString('id-ID')}
                   </td>
+                </tr>
+                {showDesc && (
+                  <tr>
+                    <td colSpan={5}>{formatTextWithBreaks(item.desc || "").map((item, i) => (
+                      <span key={i}>{item}<br /></span>
+                    ))}</td>
+                  </tr>
                 )}
-                <td className="text-nowrap fw-bold text-end">
-                  Rp. {item.hargaJual.toLocaleString('id-ID')}
-                </td>
-              </tr>
+              </>
             ))}
           </tbody>
         </Table>
