@@ -1,5 +1,5 @@
 import { Stack, Table } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { client } from '.././sanity';
 import { PaketData } from '../vite-env';
 
@@ -13,7 +13,7 @@ export default function DaftarHarga({
   const [data, setData] = useState<PaketData[]>([]);
   const [sortedData, setSortedData] = useState<PaketData[]>([]);
   const [kolomKode, setKolomKode] = useState<boolean>(false)
-  const [showDesc, setShowDesc] = useState<boolean>(false)
+  const [showDesc, setShowDesc] = useState<{ [key: number]: boolean }>({})
 
   /**
    * Mengambil lamanya masa aktif dari teks paket.
@@ -21,10 +21,12 @@ export default function DaftarHarga({
    * @returns Jumlah hari masa aktif, atau null jika tidak ditemukan.
    */
   function getActiveDays(text: string): number | null {
-    const regex = /(\d+)\s*Hari/i; // Regex untuk mencocokkan "x Hari"
+    // Regex untuk mencocokkan "x Hari" atau "xHr"
+    const regex = /(\d+)\s*(Hari|Hr)/i;
     const match = text.match(regex);
     return match ? parseInt(match[1], 10) : null;
   }
+  
 
   const removeStrBeforeStrip = (teks: string): string => {
     // Temukan posisi strip dan spasi setelahnya
@@ -103,10 +105,10 @@ export default function DaftarHarga({
           </thead>
           <tbody>
             {sortedData.map((item, index) => (
-              <>
-                <tr key={index}>
+              <Fragment key={index}>
+                <tr>
                   <td>{kolomKode ? item.kode : index + 1}</td>
-                  <td className="text-start" onClick={() => setShowDesc(!showDesc)}>{removeStrBeforeStrip(item.produk)}</td>
+                  <td className="text-start" onClick={() => setShowDesc((prev) => ({ ...prev, [index]: !showDesc[index] }))}>{removeStrBeforeStrip(item.produk)}</td>
                   <td className='text-center'>{getActiveDays(item.produk)} Hari</td>
                   {kolomKode && (
                     <td className="text-nowrap fw-bold text-end">
@@ -117,14 +119,14 @@ export default function DaftarHarga({
                     Rp. {item.hargaJual.toLocaleString('id-ID')}
                   </td>
                 </tr>
-                {showDesc && (
-                  <tr>
+                {showDesc[index] && (
+                  <tr key={index}>
                     <td colSpan={5}>{formatTextWithBreaks(item.desc || "").map((item, i) => (
                       <span key={i}>{item}<br /></span>
                     ))}</td>
                   </tr>
                 )}
-              </>
+              </Fragment>
             ))}
           </tbody>
         </Table>

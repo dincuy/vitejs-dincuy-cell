@@ -6,6 +6,12 @@ import { useState } from 'react';
 export default function App() {
   const [operator, setOperator] = useState<string>('telkomsel')
   const [hideBtn, setHideBtn] = useState<boolean>(true)
+  const [btn, setBtn] = useState<{ [key: string]: boolean }>({})
+
+  const handleBtnProvider = (prov: string) => {
+    setOperator(prov)
+    setBtn((prev) => ({ ...prev, [prov]: !btn[prov] }))
+  }
   return (
     <>
       <Container className="text-white">
@@ -18,12 +24,12 @@ export default function App() {
           />
         </div>
         {hideBtn && (
-          <ButtonGroup aria-label="Basic example" style={{position: "absolute", left: "30px", top: "50px"}}>
-            <Button variant="secondary" onClick={() => setOperator('telkomsel')}>Telkomsel</Button>
-            <Button variant="secondary" onClick={() => setOperator('axis')}>Axis</Button>
-            <Button variant="secondary" onClick={() => setOperator('xl')}>XL</Button>
-            <Button variant="secondary" onClick={() => setOperator('indosat')}>Indosat</Button>
-            <Button variant="secondary">By U</Button>
+          <ButtonGroup aria-label="Basic example" style={{ position: "absolute", left: "30px", top: "50px" }}>
+            <Button className={btn['telkomsel'] ? 'btn-provider active' : 'btn-provider'} variant="primary" onClick={() => handleBtnProvider('telkomsel')}>Telkomsel</Button>
+            <Button className={btn['axis'] ? 'btn-provider active' : 'btn-provider'} variant="primary" onClick={() => handleBtnProvider('axis')}>Axis</Button>
+            <Button className={btn['xl'] ? 'btn-provider active' : 'btn-provider'} variant="primary" onClick={() => handleBtnProvider('xl')}>XL</Button>
+            <Button className={btn['indosat'] ? 'btn-provider active' : 'btn-provider'} variant="primary" onClick={() => handleBtnProvider('indosat')}>Indosat</Button>
+            <Button className={btn['by u'] ? 'btn-provider active' : 'btn-provider'} variant="primary">By U</Button>
           </ButtonGroup>
         )}
         <DaftarHarga kategori="voucher-internet" provider={operator} />
